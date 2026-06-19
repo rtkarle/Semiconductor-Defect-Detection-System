@@ -1,0 +1,13 @@
+# AI/ML dependencies
+tensorflow==2.16.1
+keras==3.3.3
+numpy==1.26.4
+opencv-python==4.9.0.80
+Pillow==10.3.0
+scikit-learn==1.4.2
+matplotlib==3.9.0
+seaborn==0.13.2
+ultralytics==8.2.18
+albumentations==1.4.8
+tqdm==4.66.4
+pandas==2.2.2

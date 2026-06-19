@@ -1,0 +1,97 @@
+version: "3.9"
+
+services:
+  # ── MySQL ────────────────────────────────────────────────────────────────────
+  db:
+    image: mysql:8.0
+    container_name: semi_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE:      ${DB_NAME:-semiconductor_defect_db}
+      MYSQL_USER:          ${DB_USER:-semi_user}
+      MYSQL_PASSWORD:      ${DB_PASSWORD:-semi_password}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./database/seed_data.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-rootpassword}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - semi_net
+
+  # ── FastAPI Backend ──────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: semi_backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DEBUG:            "False"
+      ENVIRONMENT:      production
+      DB_HOST:          db
+      DB_PORT:          "3306"
+      DB_NAME:          ${DB_NAME:-semiconductor_defect_db}
+      DB_USER:          ${DB_USER:-semi_user}
+      DB_PASSWORD:      ${DB_PASSWORD:-semi_password}
+      SECRET_KEY:       ${SECRET_KEY:-change_me_in_production_at_least_32_chars}
+      ALLOWED_ORIGINS:  "http://localhost:3000,http://frontend"
+      UPLOAD_DIR:       /app/uploads
+      REPORTS_DIR:      /app/reports
+      MAIL_USERNAME:    ${MAIL_USERNAME:-}
+      MAIL_PASSWORD:    ${MAIL_PASSWORD:-}
+      MAIL_FROM:        ${MAIL_FROM:-noreply@semiconductor-ai.com}
+      MAIL_SERVER:      ${MAIL_SERVER:-smtp.gmail.com}
+      MAIL_PORT:        "587"
+      MAIL_TLS:         "True"
+      MAIL_SSL:         "False"
+    ports:
+      - "8000:8000"
+    volumes:
+      - uploads_data:/app/uploads
+      - reports_data:/app/reports
+      - ./ai_model/weights:/app/../ai_model/weights:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+    networks:
+      - semi_net
+
+  # ── React Frontend ────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:8000/api/v1
+    container_name: semi_frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "3000:80"
+    networks:
+      - semi_net
+
+volumes:
+  mysql_data:
+  uploads_data:
+  reports_data:
+
+networks:
+  semi_net:
+    driver: bridge

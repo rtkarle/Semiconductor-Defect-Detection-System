@@ -1,0 +1,10 @@
+# Place trained model weights here:
+#   defect_model.h5      — TensorFlow/Keras classification model
+#   yolov8_defect.pt     — YOLOv8 detection model
+#
+# Generate synthetic training data first:
+#   python generate_synthetic_data.py --output_dir data --samples_per_class 300
+#
+# Then train:
+#   python train.py --train_dir data/train --val_dir data/val --epochs 30
+#   python yolo_train.py --dataset_dir data --epochs 50

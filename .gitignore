@@ -1,0 +1,62 @@
+# ── Environment / Secrets (NEVER commit) ─────────────────────
+.env
+.env.local
+.env.development
+backend/.env
+backend/.env.production
+backend/.env.development
+
+# frontend .env.production is safe (only has VITE_API_URL - no secrets)
+# frontend/.env.production  ← intentionally NOT ignored
+
+# ── Python ────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+backend/venv/
+
+# ── Node ──────────────────────────────────────────────────────
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+
+# ── Uploaded files & generated PDFs ──────────────────────────
+backend/uploads/*
+backend/reports/*
+!backend/uploads/.gitkeep
+!backend/reports/.gitkeep
+
+# ── AI model weights ─────────────────────────────────────────
+ai_model/weights/*.h5
+ai_model/weights/*.pt
+ai_model/data/
+ai_model/logs/
+ai_model/runs/
+
+# ── IDE ───────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── OS ────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Logs ──────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── All PowerShell helper scripts (may contain tokens) ───────
+*.ps1

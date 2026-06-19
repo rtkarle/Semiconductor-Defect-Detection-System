@@ -1,0 +1,68 @@
+services:
+  - type: web
+    name: semiconductor-defect-api1
+    runtime: python
+    region: oregon
+    plan: free
+    rootDir: backend
+
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1
+
+    healthCheckPath: /health
+
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: "False"
+      - key: APP_NAME
+        value: "AI Semiconductor Defect Detection"
+      - key: APP_VERSION
+        value: "1.0.0"
+      - key: API_V1_PREFIX
+        value: "/api/v1"
+      - key: SECRET_KEY
+        value: "semiconductor_ai_prod_secret_key_rtkarle_2024_very_long"
+      - key: ALGORITHM
+        value: "HS256"
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "60"
+      - key: REFRESH_TOKEN_EXPIRE_DAYS
+        value: "7"
+      - key: DB_HOST
+        value: "sql12.freesqldatabase.com"
+      - key: DB_PORT
+        value: "3306"
+      - key: DB_NAME
+        value: "sql12830920"
+      - key: DB_USER
+        value: "sql12830920"
+      - key: DB_PASSWORD
+        value: "L9wdXfyWt5"
+      - key: ALLOWED_ORIGINS
+        value: "https://semiconductor-defect-detection-system-5u68uygkl.vercel.app,https://semiconductor-defect-detection-system.vercel.app"
+      - key: UPLOAD_DIR
+        value: "uploads"
+      - key: REPORTS_DIR
+        value: "reports"
+      - key: MAX_UPLOAD_SIZE_MB
+        value: "20"
+      - key: ALLOWED_IMAGE_TYPES
+        value: "image/jpeg,image/png,image/tiff,image/bmp"
+      - key: CONFIDENCE_THRESHOLD
+        value: "0.50"
+      - key: MAIL_USERNAME
+        value: ""
+      - key: MAIL_PASSWORD
+        value: ""
+      - key: MAIL_FROM
+        value: "noreply@semiconductor-ai.com"
+      - key: MAIL_SERVER
+        value: "smtp.gmail.com"
+      - key: MAIL_PORT
+        value: "587"
+      - key: MAIL_TLS
+        value: "True"
+      - key: MAIL_SSL
+        value: "False"
